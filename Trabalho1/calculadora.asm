@@ -95,11 +95,8 @@ fibonacci:
 	j main				# Volta para o menu
 	
 fib_rec:
-	addi $sp, $sp, -16		# Move $sp 16 bytes adiante na stack
-	sw $ra, 0($sp)			# Salva registradores na stack nos 16 bytes reservados
-	sw $a1, 4($sp)			
-	sw $a2, 8($sp)
-	sw $a3, 12($sp)
+	addi $sp, $sp, -4		# Move $sp 4 bytes adiante na stack
+	sw $ra, 0($sp)			# Salva registrador na stack nos 4 bytes reservados
 	
 	ble $a3, $0, fib_return		# Condição de parada - se $a3 chegar em 0 -> fib_return
 	
@@ -121,7 +118,7 @@ fib_rec:
 	
 fib_return:
 	lw $ra, 0($sp)			# Desempilha valor de $ra da stack
-	addi $sp, $sp, 16		# Volta $sp 16 bytes
+	addi $sp, $sp, 4		# Volta $sp 16 bytes
 	
 	jr $ra				# Desvia para endereço guardado em $ra
 
