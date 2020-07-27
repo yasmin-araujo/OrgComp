@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Trabalho 2</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Org. e Arq. de Computadores</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">Sobre</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/post-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Pipeline x Monociclo</h1>
+            <h2 class="subheading">Comparação Entre Pipeline e Monociclo</h2>
+            <!-- <span class="meta">Posted by
+              <a href="#">Start Bootstrap</a>
+              on August 24, 2019</span> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>Como vimos, a implementação de uma arquitetura pipeline possui vantagens em relação à monociclo. Mas existem alguns problemas associados, como o tempo que leva para escrever e ler dos registradores intermediários. O tempo do ciclo de clock também vai precisar sofrer algumas alterações. Vamos ver, com um exemplo hipotético, como um processador com pipeline se comporta em relação a um monociclo.</p>
+
+          <p>Suponha que o processamento de uma instrução envolva 5 etapas: busca, decodificação, execução, acesso à memória e escrita no banco de registradores:</p>
+
+          <img class="img-fluid" src="img/img-etapas-processamento.png" alt="Etapas Processamento da Instrução">
+
+          <p>Agora vamos analisar o número de instruções por segundo que cada arquitetura pode processar. Vamos considerar que a escrita e leitura nos registradores intermediários leva 20ps para ocorrer.</p>
+
+          <h2 class="section-heading">Monociclo</h2>
+
+          <br>
+
+          <h4>Tempo de ciclo</h4>
+
+          <p>Na monociclo, o tempo de ciclo é a soma dos tempos de cada etapa. Assim, o tempo de ciclo é 250 + 100 + 370 + 400 + 150 = 1270 ps.</p>
+
+          <h4>Clocks por instrução</h4>
+          
+          <p>Como o nome já diz, na monociclo temos 1 ciclo de clock por instrução.</p>
+          
+          <h4>Throughput</h4>
+
+          <p>É uma regra de três simples: se temos 1 clock por instrução, e cada ciclo leva 1270 ps para acontecer, então temos que o número de instruções por segundo é (1270 * 10⁻¹² * 1)⁻¹ ≃ <strong>7,87 * 10⁸</strong>.</p>
+
+          <h2 class="section-heading">Pipeline</h2>
+
+          <br>
+
+          <h4>Tempo de ciclo</h4>
+
+          <p>Na pipeline, o tempo de ciclo é o tempo que leva para finalizar a etapa mais lenta da instrução, mais o tempo para escrita nos registradores intermediários. Assim, o tempo de ciclo é 400 + 20 = 420 ps.</p>
+
+          <h4>Clocks por instrução</h4>
+          
+          <p>O número de clocks por instrução é exatamente o número de etapas em cada instrução. Assim, são necessários 5 ciclos para finalizar uma instrução.</p>
+          
+          <h4>Throughput</h4>
+
+          <p>É aqui que a pipeline fica interessante: mesmo que precisemos de 5 ciclos para finalizar cada instrução, depois que finalizamos a primeira instrução, teremos uma instrução sendo finalizada a cada ciclo de clock. Ou seja, levamos 4 ciclos sem finalizar nenhuma instrução, mas todos os outros ciclos encerrarão uma tarefa. Assim, o número de instruções finalizadas a cada segundo é (420 * 10⁻¹² * 1)⁻¹ ≃ <strong>2,3 * 10⁹</strong>.</p>
+
+          <h2 class="section-heading">Conclusão</h2>
+
+          <p>Comparando os resultados, temos que a arquitetura pipeline, nesse caso, apresenta uma performance aproximadamente três vezes mais rápida que a performance da arquitetura monociclo.</p>
+
+          <p>Cabe a observação de que, como o tempo de ciclo da pipeline é o tempo para finalizar a etapa mais lenta (+ o tempo de escrita nos registradores), esse tipo de arquitetura é ainda mais rápido quando os tempos para executar cada etapa são próximos: se o tempo de escrita nos registradores tendesse a zero, não houvesse <a href="./#">problemas de dependência</a> e desprezarmos o tempo que leva para termos uma instrução sendo finalizada por ciclo, a pipeline seria tão mais rápida quanto fosse o número de etapas. Se tivéssemos 20 etapas de 50 ps cada, teríamos 2 * 10¹⁰ instruções por segundo. Se tivéssemos 100 etapas de 10 ps, teríamos 10¹¹ instruções por segundo, e assim por diante, <em>ad infinitum</em>.</p>
+
+          <p>Mas, é claro, o tempo de escrita nos registradores não pode ser desprezado, principalmente se o tempo da etapa mais longa for curto. Também temos problemas de dependências, quando uma instrução futura precisa que uma instrução passada tenha sido finalizada. Esse fator deixa a pipeline mais complexa e limita o seu potencial, mas nem por isso ela deixa de ser muito eficiente em relação à performance da arquitetura monociclo.</p>
+
+          <div style="display: flex; justify-content: center;">
+            <img style="max-width: 350px; width: 100%;" class="img-fluid" src="img/img-processador.png" alt="Processador Intel Core i5">
+          </div>
+
+          <span class="caption text-muted">Processadores Intel, de modo geral, implementam pipeline</span>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; Your Website 2020</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>

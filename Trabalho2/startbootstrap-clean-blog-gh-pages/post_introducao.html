@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Trabalho 2</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Org. e Arq. de Computadores</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">Sobre</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/post-bg.jpg')">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Introdução ao Pipeline</h1>
+            <h2 class="subheading">Uma breve introdução à estrutura pipeline</h2>
+            <!-- <span class="meta">Posted by
+              <a href="#">Start Bootstrap</a>
+              on August 24, 2019</span> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>Quando falamos de processadores, um aspecto muito importante é o seu desempenho, ou seja, quão rápido ele consegue processar informações. Quanto maior for essa velocidade, mais dados podem ser processados, mais tarefas podem ser cumpridas e mais responsivo um sistema ou software pode ser. Por isso, é interessante entender o que faz de um processador um bom processador.</p>
+
+          <p>
+            Assim, são alguns os fatores que podem aumentar a velocidade de um processador:
+            <ul>
+                <li><strong>Instruções por programa</strong>: É o número de instruções que um programa tem;</li>
+                <li><strong>Tempo de clock</strong>: É o tempo que o processador leva para executar um ciclo de clock. O clock é como o "ritmo" do processador, e todo circuito não combinacional do computador é regido por esse "ritmo";</li>
+                <li><strong>Ciclos de clock por instrução</strong>: É o número médio de clocks necessário para que uma instrução seja executada. Como cada instrução pode ter tempos diferentes, o número de ciclos por instrução pode variar;</li>
+                <li><strong>Throughput</strong>: É o número de instruções finalizadas por unidade de tempo.</li>
+            </ul>
+          </p>
+
+          <p>Dispondo desses dados, podemos calcular quanto tempo um processador leva para executar e finalizar um programa. A rigor, se nosso objetivo é apenas comparar a performance de dois processadores, podemos ignorar o número de instruções de um programa. Assim, podemos tentar melhor o tempo de clock, o número de clocks por instrução ou o throughput.</p>
+
+          <p>Melhorar o clock, isto é, diminuir o tempo de cada ciclo envolve o tempo necessário para acessar diferentes componentes dentro do processador (veja <a href="post_intro_comparacao.html">Comparação entre pipeline e monociclo</a>). O número de ciclos de clock por instrução depende muito da instrução a ser executada. Então vamos procurar entender como melhorar o throughput, em particular, pela técnica de pipeline.</p>
+
+          <p>O pipeline é uma técnica usada em processadores que consiste em “paralelizar” a execução de instruções. O que ocorre não é de fato uma paralelização, já que não estamos falando do uso de mais processadores e da divisão de tarefas entre eles. Na verdade, a paralelização do pipeline ocorre em nível de componentes da CPU, evitando que algum componente fique ocioso.</p>
+
+          <p>Funciona como uma linha de montagem: em uma arquitetura que não implementa pipeline, uma instrução é buscada, decodificada, executada, acessa a memória e acessa o banco de registradores, tudo isso para então todo esse processo começar de novo, só que com outra instrução. Nesse caso, o tempo inteiro há componentes sem atividade, “esperando” sua vez de agir novamente.</p>
+
+          <img alt="Arquitetura monociclo" class="img-fluid" src="img/img-monociclo.png">
+
+          <span class="caption text-muted">Arquiteturas monociclo funcionam como um trabalhador só: uma nova atividade só começa quando outra termina</span>
+
+          <p>Já num fluxo de instruções de uma arquitetura que implementa o pipeline, cada componente executa uma tarefa a cada momento, finalizando e “entregando” o resultado para o próximo componente.</p>
+
+          <p>Por exemplo, em um primeiro momento, a instrução 1 será buscada. No momento 2, a instrução 1 será decodificada, enquanto a instrução 2 será buscada. No momento 3, a instrução 1 será executada, a instrução 2 será decodificada e a instrução 3 será buscada, e assim por diante.</p>
+
+          <img alt="Arquitetura pipeline" class="img-fluid" src="img/img-pipeline.png">
+          
+          <span class="caption text-muted">Já as arquiteturas pipeline funcionam como uma linha de montagem, e uma tarefa começa sempre que a primeira parte da tarefa anterior é finalizada</span>
+
+          <br>
+
+          <img alt="Arquitetura pipeline" class="img-fluid" src="img/img-pipeline2.png">
+
+          <p>Assim, quando a instrução 1 for finalizada, a instrução 2 estará próxima do fim. Quando a instrução 2 terminar, a 3 vai estar acabando, e assim por diante.</p>
+
+          <p>Ou seja, depois que a instrução 1 for finalizada, cada ciclo de clock representa a finalização de mais uma instrução. Ou seja, a cada unidade de tempo, mais instruções são finalizadas. É isso que significa o aumento do throughput.</p>
+
+          <h2 class="section-heading">Como Funciona</h2>
+
+          <p>Um dos aspectos importantes para implementar a arquitetura pipeline é entender os registradores intermediários. Como não podemos simplesmente salvar os dados que passam de uma etapa para a outra entre os ciclos de clock, é necessário inserir um conjunto de registradores entre cada uma dessas etapas. Escrever e ler desses registradores gastará um tempo adicional.</p>
+
+          <img alt="Pipeline com quatro estágios de instrução" class="img-fluid" src="img/img-pipeline3.png">
+
+          <p>As entradas desses registradores vêm e vão para lugares específicos. Por exemplo, se uma instrução que indica que o conteúdo dos registradores $1 e $2 serão somados e o resultado deve ser armazenado no registrador $3, temos que a seguinte passagem nos ciclos de clock (‘C’ e ‘F’ indicam o começo e o fim do ciclo):</p>
+
+          <ul>
+              <li><strong>1C</strong> - Instrução é buscada na memória.</li>
+              <li><strong>1F</strong> - Instrução é escrita no conjunto de registradores R2, que guardam apenas informações sobre uma instrução.</li>
+              <li><strong>2C</strong> - Os registradores R2 são lidos. Os sinais da unidade de controle determinam quais bits da instrução serão pegos e para onde irão. Nesse caso, acessa-se o conteúdo dos registradores $1 e $2.</li>
+              <li><strong>2F</strong> - O conteúdo desses registradores é escrito nos registradores intermediários R3. Além disso, o endereço de $3 também é escrito em R3.</li>
+              <li><strong>3C</strong> - Os registradores R3 são lidos. Pelos sinais da unidade de controle, os conteúdos serão operados com uma soma na ULA.</li>
+              <li><strong>3F</strong> - O resultado da ULA é escrito nos registradores R4. O endereço do registrador $3 também é escrito em R4.</li>
+              <li><strong>4C</strong> - Os registradores são todos lidos. Agora, a soma volta para o banco de registradores.</li>
+              <li><strong>4F</strong> - O resultado da soma é escrito no endereço de $3.</li>
+          </ul>
+
+          <p>Vale lembrar que, durante esses ciclos, não é só a instrução de soma que está sendo executada, mas falamos só dela para facilitar o entendimento.</p>
+
+          <p>Além de ser importante para passar dados entre as etapas, também podemos passar sinais da unidade de controle entre eles. Afinal, não queremos que os sinais de controle de uma instrução afetem o processamento de outra instrução. Assim, se tivermos uma add seguida de uma store word, não corremos o risco do resultado da adição ficar guardado na memória: a memória só será habilitada quando a instrução store word chegar na fase de acesso à memória.</p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; Your Website 2020</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
