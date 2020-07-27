@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Trabalho 2</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Custom fonts for this template -->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+
+  <!-- Custom styles for this template -->
+  <link href="css/clean-blog.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">Org. de Computadores</a>
+      <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+        Menu
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about.html">Sobre</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Page Header -->
+  <header class="masthead" style="background-image: url('img/dependencia-controle-bg.jpeg'); background-color: #ffffff;">
+    <div class="overlay"></div>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <div class="post-heading">
+            <h1>Dependências de Controle</h1>
+            <h2 class="subheading">Algumas dependências de controle e suas soluções</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Post Content -->
+  <article>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <p>As dependências de controle ocorrem quando o fluxo natural do programa sofre modificações. Isso acontece, por exemplo, quando há utilização de instruções condicionais, as quais podem alterar ou não a ordem em que as instruções serão executadas e o program counter (PC) atual. Ao analisar a estrutura do pipeline estudado como exemplo, a decisão sobre o desvio ou não é feita apenas na etapa da decodificação da instrução, a instrução subsequente já foi lida da memória para o processador. No entanto, caso o salto precise ser tomado, a instrução carregada é errada e é necessário esvaziar o pipeline.</p>
+
+          <div style="display: flex; justify-content: center;">
+                <img style="max-width: 600px; width: 100%;" alt="Dependência no pipeline" class="img-fluid" src="img/pipeline_control-hazard.png">
+          </div>
+
+          <span class="caption text-muted">Exemplo de dependência de controle</span>
+
+          <p>Para solucionar este problema é possível simplesmente “congelar” o pipeline, inserindo bolhas que não executam nenhuma instrução, até que o resultado do desvio seja conhecido. No entanto, caso o pipeline seja composta por muitas etapas e o estágio em que a decisão do fluxo é tomada esteja muito para frente, essa estratégia passa a ser muito lenta, tornando a execução do programa devagar.</p>
+
+          <div style="display: flex; justify-content: center;">
+            <img style="max-width: 600px; width: 100%;" alt="Pipeline com bolhas" class="img-fluid" src="img/pipeline_flush.png">
+          </div>
+        
+          <h2 class="section-heading">Redução de Atrasos nos Desvios</h2>
+
+          <p>Como foi discutido, o atraso no pipeline devido aos desvios condicionais é de três ciclos. Para minimizar o efeito desse tipo de dependência há duas possibilidades: avaliar a decisão do desvio ou calcular o endereço de desvio mais cedo.</p>
+
+          <p>Estas duas abordagens podem ser implementadas com algumas alterações no hardware, de forma que tanto o circuito de decisão do desvio como o circuito para o cálculo do novo valor do PC passe a agir no segundo estágio da execução da instrução. Esses circuitos formam uma nova unidade no nosso processador chamado <strong><em>Hazard Detection Unit</em></strong> e fazem com que a penalidade seja de apenas um ciclo para os desvios condicionais mais comuns.</p>
+
+          <h2 class="section-heading">Previsão de desvios</h2>
+
+          <p>Todas as soluções citadas até agora são implementadas através de modificações no hardware do processador. Embora essas opções apresentem uma boa alternativa para a arquitetura estudada (MIPS), como já comentado, outras arquiteturas têm pipelines mais longos, o que faz com que sofram uma penalidade muito maior. Sendo assim, foram criadas outras alternativas para lidar com as dependências de controle, as chamadas previsão de desvios (<em>branch prediction</em>).</p>
+
+          <p>A forma mais simples de previsão é sempre seguir o fluxo sequencial, considerando que o desvio não será tomado e corrigindo essa suposição apenas se necessário. Caso o desvio realmente não deva ser tomado, é só continuar normalmente a execução do programa, mas caso contrário, é preciso descartar as instruções já lidas e decodificadas que não devem ser executadas. Para isso, basta alterar todos os valores de controle para 0, impedindo qualquer ação no processador. Como já visto, no pipeline estudado a decisão é feita apenas no estágio MEM, então é preciso descartar todas as instruções carregadas nos estágios anteriores (IF, ID e EX).</p>
+
+          <h3>Previsão estática de desvios</h3>
+
+          <p>A previsão estática pode ser feita em tempo de compilação e é baseada em valores estatísticos determinados através da análise do comportamento do código ou através da execução prévia do mesmo (<em>profile based prediction</em>). Nela, o compilador simplesmente assume uma das opções a seguir:</p>
+
+          <ul>
+              <li>Todos os desvios devem ser tomados (<em>branch taken</em>);</li>
+              <li>Todos os desvios não devem ser tomados (<em>branch not taken</em>);</li>
+              <li>Os devidos serão tomados ou não dependendo do código do operation code;</li>
+              <li>Os desvios anteriores são tomados e os desvios para frente são assumidos como não tomados (<em>backward-taken, forward not-taken</em> - BTFNT).</li>
+          </ul>
+    
+          <p>Quando a previsão é errada, é preciso esvaziar o pipeline, gerando “bolhas” e atrasando a execução do código. Como a escolha do comportamento do previsor é fixa e não pode ser alterada durante a execução do programa, este tipo de previsão apresenta uma baixa taxa de acertos.</p>
+
+          <h3>Previsão dinâmica de desvios</h3>
+
+          <p>A previsão dinâmica de desvios procura analisar a variação do comportamento de desvio durante a execução dos programas.</p>
+
+          <p>A forma mais simples de se fazer essa previsão é através do branch history table (BHT), o qual consiste em uma pequena memória indexada pela parte menos significativa do endereço da instrução de desvio. Nessa memória é armazenado a ação que deve ser tomada no próximo desvio de acordo com seu comportamento anterior.</p>
+
+          <h4>Previsor de 1 Bit</h4>
+
+          <p>Nesse previsor, a memória apresenta apenas um bit indicando se o desvio foi tomado ou não no último acesso. Se o previsor errar a previsão ele troca de estado.</p>
+
+          <div style="display: flex; justify-content: center;">
+            <img style="max-height: 400px; width: auto;" class="img-fluid" src="img/pipeline_previsor1bit.png" alt="Previsor de 1-Bit">
+          </div>
+            
+          <span class="caption text-muted">Funcionamento de um previsor de 1-Bit</span>
+
+          <p>Este previsor é eficaz, por exemplo, na iteração de um loop, uma vez que ele prediz corretamente um desvio enquanto o loop não termina.</p>
+
+          <h4>Previsor de 2 bits</h4>
+
+          <p>Uma evolução deste método é o previsor de dois bits. Neste caso, é preciso que o previsor erre duas vezes seguidas para que ele troque de estado.</p>
+          
+          <div style="display: flex; justify-content: center;">
+            <img style="max-width: 350px; width: 100%;" class="img-fluid" src="img/pipeline_previsor2bits.png" alt="Previsor de 2-Bits">
+          </div>
+
+          <span class="caption text-muted">Funcionamento de um previsor de 2-Bits</span>
+
+          <p>Esta memória de previsão pode ser implementada como uma <strong>cache especial</strong> integrada com o circuito do ciclo de busca (IF). Apesar dessa implementação ser bastante útil para diversas arquiteturas, note que ela não é válida para a que foi analisada aqui, pois no pipeline do MIPS o endereço de desvio é definido apenas no final do ciclo de decodificação (ID). Outra forma de implementá-la é no <strong>cache de instrução</strong>, armazenando os bits de decisão junto com as instruções que estão na cache.</p>
+
+          <p>É possível melhorar este método armazenando também, além dos bits de previsão de desvio, o endereço de destino caso o desvio seja tomado. Após a primeira vez que o desvio é tomado, o endereço calculado é guardado, sendo assim na próxima execução dessa mesma instrução não será necessário recalculá-lo. Essa implementação é chamada de <strong><em>branch-target buffer</em> (BTB)</strong>.</p>
+
+          <div style="display: flex; justify-content: center;">
+            <img style="max-width: 500px; width: 100%;" alt="Dependência no pipeline" class="img-fluid" src="img/pipeline_branch-target-buffer.png">
+          </div>
+          
+          <span class="caption text-muted">Exemplo de branch-target buffer</span>
+
+          <h2 class="section-heading">Desvios atrasados</h2>
+
+          <p>Uma outra técnica existente para lidar com a dependência de controle é a chamada desvio atrasado (<em>delayed branch</em>), na qual a instrução seguinte à instrução de desvio é sempre executada, sendo o desvio tomado ou não. Para isso é necessário reordenar as instruções do programa de forma que a instrução que suceda o desvio sempre seja executada no programa e seu deslocamento não altere o fluxo do programa. Essa posição seguinte ao desvio é chamada posição de atraso (<em>delay slot</em>) é responsabilidade do compilador decidir qual instrução irá ocupá-la.</p>
+
+          <p>Para facilitar o trabalho do compilador, muitas arquiteturas apresentam a opção de anular o delay slot automaticamente caso o desvio condicional não seja tomado.</p>
+
+          <img alt="Dependência no pipeline" class="img-fluid" src="img/pipeline_delay-slot.png">
+
+          <span class="caption text-muted">Preenchimento do delay slot através da reordenação de instruções</span>
+
+          <p>Note que essa solução pode ser não tão eficaz para pipelines mais longos, pois conforme discutido anteriormente, se o atraso do pipeline for maior que 1 ciclo, será necessário mais do que uma instrução sucedendo o desvio para que não haja ciclos parados.</p>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <hr>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-10 mx-auto">
+          <ul class="list-inline text-center">
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-facebook-f fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+            <li class="list-inline-item">
+              <a href="#">
+                <span class="fa-stack fa-lg">
+                  <i class="fas fa-circle fa-stack-2x"></i>
+                  <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                </span>
+              </a>
+            </li>
+          </ul>
+          <p class="copyright text-muted">Copyright &copy; 2020</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Custom scripts for this template -->
+  <script src="js/clean-blog.min.js"></script>
+
+</body>
+
+</html>
